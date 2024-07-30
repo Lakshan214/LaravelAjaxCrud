@@ -133,6 +133,7 @@
                                     <button type="button" class="btn btn-primary float-end" data-bs-toggle="modal"
                                         data-bs-target="#AddStudentModal">Add Student</button>
                                 </h4>
+                                <input type="text" id="search" class="form-control mt-2" placeholder="Search students...">
                             </div>
                             <div class="card-body">
                                 <table class="table table-bordered">
@@ -161,43 +162,51 @@
 
     </div>
 
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         $(document).ready(function() {
 
             fetchstudent();
-            function fetchstudent() {
-    $.ajax({
-        type: "GET",
-        url: "/fetch-students",
-        dataType: "json",
-        success: function(response) {
-            $('tbody').html("");
-            $.each(response.students, function(key, item) {
-                var statusButton = item.status == 1
-                    ? '<td><button type="button" class="btn btn-success editbtn btn-sm">Complete</button></td>'
-                    : '<td><button type="button" class="btn btn-primary warning btn-sm">Incomplete</button></td>';
+            function fetchstudent(query = '') {
+        $.ajax({
+            type: "GET",
+            url: "/fetch-students",
+            data: { query: query },
+            dataType: "json",
+            success: function(response) {
+                $('tbody').html("");
+                $.each(response.students, function(key, item) {
+                    var statusButton = item.status == 1
+                        ? '<td><button type="button" class="btn btn-success editbtn btn-sm">Complete</button></td>'
+                        : '<td><button type="button" class="btn btn-primary warning btn-sm">Incomplete</button></td>';
 
                     var statusButton2 = item.status == 1
-                    ? '<td><button type="button" value="' + item.id + '" class="btn btn-warning statusbtn btn-sm">Incomplete</button></td>'
-                    : '<td><button type="button" value="' + item.id + '" class="btn btn-info statusbtn btn-sm">complete</button></td>';
+                        ? '<td><button type="button" value="' + item.id + '" class="btn btn-warning statusbtn btn-sm">Incomplete</button></td>'
+                        : '<td><button type="button" value="' + item.id + '" class="btn btn-info statusbtn btn-sm">Complete</button></td>';
 
-                $('tbody').append('<tr>\
-                    <td>' + item.id + '</td>\
-                    <td>' + item.name + '</td>\
-                    <td>' + item.course + '</td>\
-                    <td>' + item.email + '</td>\
-                    <td>' + item.phone + '</td>\
-                    ' + statusButton + '\
-                    <td><button type="button" value="' + item.id + '" class="btn btn-primary editbtn btn-sm">Edit</button></td>\
-                    <td><button type="button" value="' + item.id + '" class="btn btn-danger deletebtn btn-sm">Delete</button></td>\
-                    ' + statusButton2 + '\
-                </tr>');
-            });
-        }
+                    $('tbody').append('<tr>\
+                        <td>' + item.id + '</td>\
+                        <td>' + item.name + '</td>\
+                        <td>' + item.course + '</td>\
+                        <td>' + item.email + '</td>\
+                        <td>' + item.phone + '</td>\
+                        ' + statusButton + '\
+                        <td><button type="button" value="' + item.id + '" class="btn btn-primary editbtn btn-sm">Edit</button></td>\
+                        <td><button type="button" value="' + item.id + '" class="btn btn-danger deletebtn btn-sm">Delete</button></td>\
+                        ' + statusButton2 + '\
+                    </tr>');
+                });
+            }
+        });
+    }
+
+    $('#search').on('keyup', function() {
+        var query = $(this).val();
+        fetchstudent(query);
     });
-}
+
 
 
             $(document).on('click', '.add_student', function(e) {
