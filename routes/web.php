@@ -23,7 +23,7 @@ Route::get('students', [TaskController::class, 'index']);
 Route::post('students', [TaskController::class, 'store']);
 Route::get('fetch-students', [TaskController::class, 'fetchstudent']);
 Route::get('edit-student/{id}', [TaskController::class, 'edit']);
-Route::put('update-student/{id}', [TaskController::class, 'update']);
+Route::post('update-student/{id}', [TaskController::class, 'update']);
 Route::delete('delete-student/{id}', [TaskController::class, 'destroy']);
 Route::get('status-change/{id}', [TaskController::class, 'status']);
 

@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\TaskStatusChanged;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class TaskController extends Controller
 {
@@ -45,6 +46,7 @@ class TaskController extends Controller
             'course'=>'required|max:191',
             'email'=>'required|email|max:191',
             'phone'=>'required|max:10|min:10',
+            'image'=>'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         if($validator->fails())
@@ -61,6 +63,13 @@ class TaskController extends Controller
             $student->course = $request->input('course');
             $student->email = $request->input('email');
             $student->phone = $request->input('phone');
+
+            if($request->hasFile('image')){
+                $image = $request->file('image');
+                 $path = $image->store('images', 'public');
+                 $student->image = $path;
+            }
+
             $student->save();
             return response()->json([
                 'status'=>200,
@@ -97,6 +106,7 @@ class TaskController extends Controller
             'course'=>'required|max:191',
             'email'=>'required|email|max:191',
             'phone'=>'required|max:10|min:10',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         if($validator->fails())
@@ -115,6 +125,18 @@ class TaskController extends Controller
                 $student->course = $request->input('course');
                 $student->email = $request->input('email');
                 $student->phone = $request->input('phone');
+
+                if($request->hasFile('image')){
+
+                    if($student->image && Storage::exists('public/images/'.$student->image)){
+                        Storage::delete('public/images/'.$student->image);
+                    }
+                    $image = $request->file('image');
+                    $path = $image->store('images', 'public');
+                    $student->image = $path;
+                }
+
+
                 $student->update();
                 return response()->json([
                     'status'=>200,
