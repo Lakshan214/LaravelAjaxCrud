@@ -18,13 +18,25 @@ class TaskController extends Controller
         return view('pages.dashbord');
     }
 
-    public function fetchstudent()
+    public function fetchstudent(Request $request)
     {
-        $students = Student::all();
+        $query = $request->input('query');
+
+        if ($query) {
+            $students = Student::where('name', 'LIKE', "%$query%")
+                ->orWhere('course', 'LIKE', "%$query%")
+                ->orWhere('email', 'LIKE', "%$query%")
+                ->orWhere('phone', 'LIKE', "%$query%")
+                ->get();
+        } else {
+            $students = Student::all();
+        }
+
         return response()->json([
-            'students'=>$students,
+            'students' => $students,
         ]);
     }
+
 
     public function store(Request $request)
     {
